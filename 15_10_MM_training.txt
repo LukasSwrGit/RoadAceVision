@@ -1,0 +1,1363 @@
+def multimodal():
+
+    ### Multimodal Training ###
+    # The number of backbone configs determine the number of feature extraction backbones to be used
+    # The number of image folders should match the number of backbone configs
+    # The files inside the image folders corresponding to the same sample must have the same name 
+    # The backbones that are loaded should be pretrained on the same dataset as the images in the folders
+
+    
+    parameters = [
+        #Daytime + Daytime
+        {
+        "backbone_configs": [
+            {"network": networks.ConvNeXtBaseClassifier, "path": r"/home/ws/ugoby/master_thesis/models/thesis/pvs1_video_v2.pt", "nr_classes": 3},
+            {"network": networks.ConvNeXtBaseClassifier, "path": r"/home/ws/ugoby/master_thesis/models/thesis/pvs1_mfcc.pt", "nr_classes": 3},
+
+        ],
+        "image_folders": [
+            r"/home/ws/ugoby/master_thesis/data/pvs1_video",
+            r"/home/ws/ugoby/master_thesis/data/pvs1_mfcc",
+        ],
+        "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+        "learning_rate": 1e-4,
+        "batch_size": 32,
+        "model_class": lambda bc, dev: (
+            lambda backbones, dims: networks.FlexibleFusionClassifier(backbones, dims, nr_classes=3)
+        )(*networks.build_backbones(bc, dev)),
+        "resize": (224, 224),
+        "epochs": 50,
+        "writer": SummaryWriter(log_dir="tensorboard/runs/MM_pvs1_video_pvs1_mfcc"),
+        "model_save_path": r"/home/ws/ugoby/master_thesis/models/MM_pvs1_video_pvs1_mfcc.pt",
+        "data_type": "multimodal",
+        "num_classes": 3,
+        
+        # Early stopping additions:
+        "early_stopping_patience": 10,
+        "min_delta": 0.001
+    },
+
+
+    #Evening + Evening
+    {
+        "backbone_configs": [
+            {"network": networks.ConvNeXtBaseClassifier, "path": r"/home/ws/ugoby/master_thesis/models/thesis/pvs9_video.pt", "nr_classes": 3},
+            {"network": networks.ConvNeXtBaseClassifier, "path": r"/home/ws/ugoby/master_thesis/models/thesis/pvs9_mfcc_v2.pt", "nr_classes": 3},
+
+        ],
+        "image_folders": [
+            r"/home/ws/ugoby/master_thesis/data/pvs9_video",
+            r"/home/ws/ugoby/master_thesis/data/pvs9_mfcc",
+        ],
+        "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+        "learning_rate": 1e-4,
+        "batch_size": 32,
+        "model_class": lambda bc, dev: (
+            lambda backbones, dims: networks.FlexibleFusionClassifier(backbones, dims, nr_classes=3)
+        )(*networks.build_backbones(bc, dev)),
+        "resize": (224, 224),
+        "epochs": 50,
+        "writer": SummaryWriter(log_dir="tensorboard/runs/MM_pvs9_video_pvs9_mfcc_v2"),
+        "model_save_path": r"/home/ws/ugoby/master_thesis/models/MM_pvs9_video_pvs9_mfcc_v2.pt",
+        "data_type": "multimodal",
+        "num_classes": 3,
+        
+        # Early stopping additions:
+        "early_stopping_patience": 10,
+        "min_delta": 0.001
+    },
+
+    #Adverse
+    #Daytime + Daytime Augmented
+        {
+        "backbone_configs": [
+            {"network": networks.ConvNeXtBaseClassifier, "path": r"/home/ws/ugoby/master_thesis/models/thesis/pvs1_video_v2.pt", "nr_classes": 3},
+            {"network": networks.ConvNeXtBaseClassifier, "path": r"/home/ws/ugoby/master_thesis/models/thesis/(warp)pvs1_mfcc++.pt", "nr_classes": 3},
+
+        ],
+        "image_folders": [
+            r"/home/ws/ugoby/master_thesis/data/pvs1_video",
+            r"/home/ws/ugoby/master_thesis/data/(warp)pvs1_mfcc++",
+        ],
+        "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+        "learning_rate": 1e-4,
+        "batch_size": 32,
+        "model_class": lambda bc, dev: (
+            lambda backbones, dims: networks.FlexibleFusionClassifier(backbones, dims, nr_classes=3)
+        )(*networks.build_backbones(bc, dev)),
+        "resize": (224, 224),
+        "epochs": 50,
+        "writer": SummaryWriter(log_dir="tensorboard/runs/MM_pvs1_video_pvs1_mfcc++"),
+        "model_save_path": r"/home/ws/ugoby/master_thesis/models/MM_pvs1_video_pvs1_mfcc++.pt",
+        "data_type": "multimodal",
+        "num_classes": 3,
+        
+        # Early stopping additions:
+        "early_stopping_patience": 10,
+        "min_delta": 0.001
+    },
+
+    #Evening + Evening Augmented
+    {
+        "backbone_configs": [
+            {"network": networks.ConvNeXtBaseClassifier, "path": r"/home/ws/ugoby/master_thesis/models/thesis/pvs9_video.pt", "nr_classes": 3},
+            {"network": networks.ConvNeXtBaseClassifier, "path": r"/home/ws/ugoby/master_thesis/models/thesis/pvs9_mfcc++_timewarp.pt", "nr_classes": 3},
+
+        ],
+        "image_folders": [
+            r"/home/ws/ugoby/master_thesis/data/pvs9_video",
+            r"/home/ws/ugoby/master_thesis/data/pvs9_mfcc++_timewarp",
+        ],
+        "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+        "learning_rate": 1e-4,
+        "batch_size": 32,
+        "model_class": lambda bc, dev: (
+            lambda backbones, dims: networks.FlexibleFusionClassifier(backbones, dims, nr_classes=3)
+        )(*networks.build_backbones(bc, dev)),
+        "resize": (224, 224),
+        "epochs": 50,
+        "writer": SummaryWriter(log_dir="tensorboard/runs/MM_pvs9_video_pvs9_mfcc++"),
+        "model_save_path": r"/home/ws/ugoby/master_thesis/models/MM_pvs9_video_pvs9_mfcc++.pt",
+        "data_type": "multimodal",
+        "num_classes": 3,
+        
+        # Early stopping additions:
+        "early_stopping_patience": 10,
+        "min_delta": 0.001
+    },
+
+    #Nightime + Nighttime normal
+    {
+        "backbone_configs": [
+            {"network": networks.ConvNeXtBaseClassifier, "path": r"/home/ws/ugoby/master_thesis/models/thesis/pvs9_video+.pt", "nr_classes": 3},
+            {"network": networks.ConvNeXtBaseClassifier, "path": r"/home/ws/ugoby/master_thesis/models/thesis/pvs9_mfcc_v2.pt", "nr_classes": 3},
+
+        ],
+        "image_folders": [
+            r"/home/ws/ugoby/master_thesis/data/pvs9_video+",
+            r"/home/ws/ugoby/master_thesis/data/pvs9_mfcc",
+        ],
+        "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+        "learning_rate": 1e-4,
+        "batch_size": 32,
+        "model_class": lambda bc, dev: (
+            lambda backbones, dims: networks.FlexibleFusionClassifier(backbones, dims, nr_classes=3)
+        )(*networks.build_backbones(bc, dev)),
+        "resize": (224, 224),
+        "epochs": 50,
+        "writer": SummaryWriter(log_dir="tensorboard/runs/MM_pvs9_video+_pvs9_mfcc_v2"),
+        "model_save_path": r"/home/ws/ugoby/master_thesis/models/MM_pvs9_video+_pvs9_mfcc_v2.pt",
+        "data_type": "multimodal",
+        "num_classes": 3,
+        
+        # Early stopping additions:
+        "early_stopping_patience": 10,
+        "min_delta": 0.001
+    },
+
+    #Extreme Adverse Conditions
+    #Nightime + Nighttime Augmented
+    {
+        "backbone_configs": [
+            {"network": networks.ConvNeXtBaseClassifier, "path": r"/home/ws/ugoby/master_thesis/models/thesis/pvs9_video+.pt", "nr_classes": 3},
+            {"network": networks.ConvNeXtBaseClassifier, "path": r"/home/ws/ugoby/master_thesis/models/thesis/pvs9_mfcc++_timewarp.pt", "nr_classes": 3},
+
+        ],
+        "image_folders": [
+            r"/home/ws/ugoby/master_thesis/data/pvs9_video+",
+            r"/home/ws/ugoby/master_thesis/data/pvs9_mfcc++_timewarp",
+        ],
+        "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+        "learning_rate": 1e-4,
+        "batch_size": 32,
+        "model_class": lambda bc, dev: (
+            lambda backbones, dims: networks.FlexibleFusionClassifier(backbones, dims, nr_classes=3)
+        )(*networks.build_backbones(bc, dev)),
+        "resize": (224, 224),
+        "epochs": 50,
+        "writer": SummaryWriter(log_dir="tensorboard/runs/MM_pvs9_video+_pvs9_mfcc++"),
+        "model_save_path": r"/home/ws/ugoby/master_thesis/models/MM_pvs9_video+_pvs9_mfcc++.pt",
+        "data_type": "multimodal",
+        "num_classes": 3,
+        
+        # Early stopping additions:
+        "early_stopping_patience": 10,
+        "min_delta": 0.001
+    },
+    ]
+
+    training_functions.train_multiple_runs(parameters)
+
+
+
+
+
+
+
+
+
+############
+
+(base) ugoby@aifb-sydsen-sun:~/master_thesis$ conda activate master_thesis
+(master_thesis) ugoby@aifb-sydsen-sun:~/master_thesis$ python /home/ws/ugoby/master_thesis/masterthesis/large_training.py
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:81: UserWarning: Argument(s) 'var_limit, mean' are not valid for transform GaussNoise
+  A.GaussNoise(var_limit=(8.0, 40.0), mean=0, per_channel=True, p=0.3),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:87: UserWarning: Argument(s) 'quality_lower, quality_upper' are not valid for transform ImageCompression
+  A.ImageCompression(quality_lower=30, quality_upper=65, p=0.75),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:88: UserWarning: Argument(s) 'num_flare_circles_lower, num_flare_circles_upper, angle_lower, angle_upper' are not valid for transform RandomSunFlare
+  A.RandomSunFlare(
+- Imports completed successfully -
+
+----- Starting training run 1 -----
+/home/ws/ugoby/master_thesis/masterthesis/training_functions.py:101: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler() if device.type == 'cuda' else None
+
+Epoch 1/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:38<00:00,  7.89it/s, acc=96.2, loss=0.103]
+Train Loss: 0.1016, Train Acc: 96.17%
+Val   Loss: 0.0098, Val   Acc: 99.72%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs1_video_v2.pt
+
+Epoch 2/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.43it/s, acc=99.3, loss=0.00178]
+Train Loss: 0.0214, Train Acc: 99.27%
+Val   Loss: 0.0011, Val   Acc: 100.00%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs1_video_v2.pt
+
+Epoch 3/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.45it/s, acc=99.7, loss=0.00164]
+Train Loss: 0.0090, Train Acc: 99.73%
+Val   Loss: 0.0098, Val   Acc: 99.56%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 4/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.46it/s, acc=99.5, loss=0.0168]
+Train Loss: 0.0154, Train Acc: 99.55%
+Val   Loss: 0.0037, Val   Acc: 99.84%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 5/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.48it/s, acc=99.8, loss=0.00118]
+Train Loss: 0.0075, Train Acc: 99.76%
+Val   Loss: 0.0073, Val   Acc: 99.78%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 6/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.48it/s, acc=99.5, loss=0.000285]
+Train Loss: 0.0175, Train Acc: 99.53%
+Val   Loss: 0.0088, Val   Acc: 99.72%
+⚠ No improvement for 4 epoch(s).
+
+Epoch 7/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.46it/s, acc=99.8, loss=0.000266]
+Train Loss: 0.0066, Train Acc: 99.79%
+Val   Loss: 0.0056, Val   Acc: 99.86%
+⚠ No improvement for 5 epoch(s).
+
+Epoch 8/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.46it/s, acc=99.8, loss=9.62e-5]
+Train Loss: 0.0064, Train Acc: 99.81%
+Val   Loss: 0.0002, Val   Acc: 100.00%
+⚠ No improvement for 6 epoch(s).
+
+Epoch 9/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.47it/s, acc=99.8, loss=0.00629]
+Train Loss: 0.0072, Train Acc: 99.82%
+Val   Loss: 0.0086, Val   Acc: 99.64%
+⚠ No improvement for 7 epoch(s).
+
+Epoch 10/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.48it/s, acc=99.6, loss=0.000247]
+Train Loss: 0.0116, Train Acc: 99.65%
+Val   Loss: 0.0015, Val   Acc: 99.96%
+⚠ No improvement for 8 epoch(s).
+
+Epoch 11/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.46it/s, acc=99.8, loss=0.000156]
+Train Loss: 0.0065, Train Acc: 99.82%
+Val   Loss: 0.0002, Val   Acc: 100.00%
+⚠ No improvement for 9 epoch(s).
+
+Epoch 12/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.47it/s, acc=99.8, loss=0.00202]
+Train Loss: 0.0082, Train Acc: 99.77%
+Val   Loss: 0.0005, Val   Acc: 100.00%
+⚠ No improvement for 10 epoch(s).
+⏹ Early stopping triggered after 12 epochs.
+
+Training complete. Best val accuracy: 100.00%
+----- Finished training run 1 -----
+
+
+🔹 Testing model pvs1_video_v2.pt on mfcc dataset
+Testing pvs1_video_v2: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 104/104 [00:12<00:00,  8.44it/s]
+✔ Results for model 'pvs1_video_v2' saved to: /home/ws/ugoby/master_thesis/test_results/pvs1_video_v2
+(master_thesis) ugoby@aifb-sydsen-sun:~/master_thesis$ python /home/ws/ugoby/master_thesis/masterthesis/large_training.py
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:81: UserWarning: Argument(s) 'var_limit, mean' are not valid for transform GaussNoise
+  A.GaussNoise(var_limit=(8.0, 40.0), mean=0, per_channel=True, p=0.3),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:87: UserWarning: Argument(s) 'quality_lower, quality_upper' are not valid for transform ImageCompression
+  A.ImageCompression(quality_lower=30, quality_upper=65, p=0.75),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:88: UserWarning: Argument(s) 'num_flare_circles_lower, num_flare_circles_upper, angle_lower, angle_upper' are not valid for transform RandomSunFlare
+  A.RandomSunFlare(
+- Imports completed successfully -
+
+----- Starting training run 1 -----
+/home/ws/ugoby/master_thesis/masterthesis/training_functions.py:101: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler() if device.type == 'cuda' else None
+
+Epoch 1/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:38<00:00,  7.88it/s, acc=96.4, loss=0.000713]
+Train Loss: 0.1009, Train Acc: 96.36%
+Val   Loss: 0.0114, Val   Acc: 99.50%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs1_video_v2.pt
+
+Epoch 2/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.45it/s, acc=99.5, loss=0.00107]
+Train Loss: 0.0170, Train Acc: 99.46%
+Val   Loss: 0.0182, Val   Acc: 99.31%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 3/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.45it/s, acc=99.4, loss=0.00527]
+Train Loss: 0.0185, Train Acc: 99.45%
+Val   Loss: 0.0383, Val   Acc: 98.65%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 4/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.44it/s, acc=99.7, loss=0.132]
+Train Loss: 0.0090, Train Acc: 99.69%
+Val   Loss: 0.0014, Val   Acc: 99.96%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs1_video_v2.pt
+
+Epoch 5/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.46it/s, acc=99.5, loss=0.00171]
+Train Loss: 0.0168, Train Acc: 99.47%
+Val   Loss: 0.0053, Val   Acc: 99.76%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 6/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.47it/s, acc=99.8, loss=8.95e-5]
+Train Loss: 0.0077, Train Acc: 99.77%
+Val   Loss: 0.0004, Val   Acc: 99.98%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 7/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.46it/s, acc=99.7, loss=0.00125]
+Train Loss: 0.0096, Train Acc: 99.71%
+Val   Loss: 0.0052, Val   Acc: 99.78%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 8/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.47it/s, acc=99.7, loss=0.00115]
+Train Loss: 0.0101, Train Acc: 99.71%
+Val   Loss: 0.0202, Val   Acc: 99.52%
+⚠ No improvement for 4 epoch(s).
+
+Epoch 9/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.47it/s, acc=99.8, loss=0.000435]
+Train Loss: 0.0071, Train Acc: 99.81%
+Val   Loss: 0.0050, Val   Acc: 99.90%
+⚠ No improvement for 5 epoch(s).
+
+Epoch 10/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.46it/s, acc=99.8, loss=0.000107]
+Train Loss: 0.0075, Train Acc: 99.81%
+Val   Loss: 0.0044, Val   Acc: 99.88%
+⚠ No improvement for 6 epoch(s).
+
+Epoch 11/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.47it/s, acc=99.7, loss=0.00126]
+Train Loss: 0.0085, Train Acc: 99.71%
+Val   Loss: 0.0028, Val   Acc: 99.90%
+⚠ No improvement for 7 epoch(s).
+
+Epoch 12/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.48it/s, acc=99.8, loss=0.00172]
+Train Loss: 0.0102, Train Acc: 99.75%
+Val   Loss: 0.0006, Val   Acc: 99.98%
+⚠ No improvement for 8 epoch(s).
+
+Epoch 13/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.48it/s, acc=100, loss=4.71e-5]
+Train Loss: 0.0007, Train Acc: 99.98%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 9 epoch(s).
+
+Epoch 14/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [01:31<00:00,  8.47it/s, acc=99.7, loss=0.000512]
+Train Loss: 0.0099, Train Acc: 99.72%
+Val   Loss: 0.0004, Val   Acc: 99.98%
+⚠ No improvement for 10 epoch(s).
+⏹ Early stopping triggered after 14 epochs.
+
+Training complete. Best val accuracy: 99.96%
+----- Finished training run 1 -----
+
+
+🔹 Testing model pvs1_video_v2.pt on mfcc dataset
+Testing pvs1_video_v2: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 104/104 [00:11<00:00,  9.11it/s]
+✔ Results for model 'pvs1_video_v2' saved to: /home/ws/ugoby/master_thesis/test_results/pvs1_video_v2
+(master_thesis) ugoby@aifb-sydsen-sun:~/master_thesis$ python /home/ws/ugoby/master_thesis/masterthesis/large_training.py
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:81: UserWarning: Argument(s) 'var_limit, mean' are not valid for transform GaussNoise
+  A.GaussNoise(var_limit=(8.0, 40.0), mean=0, per_channel=True, p=0.3),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:87: UserWarning: Argument(s) 'quality_lower, quality_upper' are not valid for transform ImageCompression
+  A.ImageCompression(quality_lower=30, quality_upper=65, p=0.75),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:88: UserWarning: Argument(s) 'num_flare_circles_lower, num_flare_circles_upper, angle_lower, angle_upper' are not valid for transform RandomSunFlare
+  A.RandomSunFlare(
+- Imports completed successfully -
+
+----- Starting training run 1 -----
+/home/ws/ugoby/master_thesis/masterthesis/training_functions.py:101: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler() if device.type == 'cuda' else None
+
+Epoch 1/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:03<00:00,  5.81it/s, acc=53.6, loss=0.398]
+Train Loss: 0.8736, Train Acc: 53.63%
+Val   Loss: 0.6006, Val   Acc: 73.52%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 2/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=75.2, loss=0.451]
+Train Loss: 0.5344, Train Acc: 75.23%
+Val   Loss: 0.6860, Val   Acc: 73.99%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 3/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.46it/s, acc=82.6, loss=0.28]
+Train Loss: 0.4028, Train Acc: 82.62%
+Val   Loss: 0.4092, Val   Acc: 82.36%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 4/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.46it/s, acc=92.7, loss=0.0404]
+Train Loss: 0.1959, Train Acc: 92.66%
+Val   Loss: 0.1763, Val   Acc: 94.01%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 5/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.49it/s, acc=96.8, loss=0.0363]
+Train Loss: 0.0875, Train Acc: 96.85%
+Val   Loss: 0.1417, Val   Acc: 95.50%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 6/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=98.3, loss=0.0508]
+Train Loss: 0.0526, Train Acc: 98.33%
+Val   Loss: 0.0926, Val   Acc: 96.90%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 7/50
+Training:  92%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏           | 340/368 [00:45<00:03,  7.54it/s, acc=99, loss=0.00163]Training:  92%|████████████████████████████████████
+███████████████████████████████████████████████████████████████████████████████████████████████████████████▏           | 340/368 [00:45<00:03,  7.46it/s, acc=99, loss=0.00163]
+Traceback (most recent call last):
+  File "/home/ws/ugoby/master_thesis/masterthesis/large_training.py", line 603, in <module>
+    single_backbones()
+  File "/home/ws/ugoby/master_thesis/masterthesis/large_training.py", line 238, in single_backbones
+    training_functions.legacy_train_multiple_runs(parameters)
+  File "/home/ws/ugoby/master_thesis/masterthesis/training_functions.py", line 210, in legacy_train_multiple_runs
+    training_functions.legacy_train_model(
+  File "/home/ws/ugoby/master_thesis/masterthesis/training_functions.py", line 111, in legacy_train_model
+    train_loss, train_acc = legacy_train_one_epoch(model, train_loader, optimizer, criterion, device, scaler)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/master_thesis/masterthesis/training_functions.py", line 34, in legacy_train_one_epoch
+    outputs = model(images)
+              ^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/master_thesis/masterthesis/networks.py", line 116, in forward
+    return self.base_model(x)
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torchvision/models/convnext.py", line 177, in forward
+    return self._forward_impl(x)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torchvision/models/convnext.py", line 171, in _forward_impl
+    x = self.features(x)
+        ^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/container.py", line 244, in forward
+    input = module(input)
+            ^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/container.py", line 244, in forward
+    input = module(input)
+            ^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torchvision/models/convnext.py", line 64, in forward
+    result = self.layer_scale * self.block(input)
+                                ^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/container.py", line 244, in forward
+    input = module(input)
+            ^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/nn/modules/activation.py", line 738, in forward
+    return F.gelu(input, approximate=self.approximate)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+conda activate master_thesis
+
+(master_thesis) ugoby@aifb-sydsen-sun:~/master_thesis$ conda activate master_thesis
+(master_thesis) ugoby@aifb-sydsen-sun:~/master_thesis$ python /home/ws/ugoby/master_thesis/masterthesis/large_training.py
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:81: UserWarning: Argument(s) 'var_limit, mean' are not valid for transform GaussNoise
+  A.GaussNoise(var_limit=(8.0, 40.0), mean=0, per_channel=True, p=0.3),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:87: UserWarning: Argument(s) 'quality_lower, quality_upper' are not valid for transform ImageCompression
+  A.ImageCompression(quality_lower=30, quality_upper=65, p=0.75),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:88: UserWarning: Argument(s) 'num_flare_circles_lower, num_flare_circles_upper, angle_lower, angle_upper' are not valid for transform RandomSunFlare
+  A.RandomSunFlare(
+- Imports completed successfully -
+
+----- Starting training run 1 -----
+/home/ws/ugoby/master_thesis/masterthesis/training_functions.py:101: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler() if device.type == 'cuda' else None
+
+Epoch 1/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:03<00:00,  5.80it/s, acc=58.8, loss=0.55]
+Train Loss: 0.8029, Train Acc: 58.84%
+Val   Loss: 0.5621, Val   Acc: 73.52%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 2/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.43it/s, acc=76.4, loss=0.498]
+Train Loss: 0.5226, Train Acc: 76.44%
+Val   Loss: 0.4742, Val   Acc: 78.41%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 3/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.40it/s, acc=84.2, loss=0.388]
+Train Loss: 0.3810, Train Acc: 84.19%
+Val   Loss: 0.2643, Val   Acc: 89.80%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 4/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.44it/s, acc=92.6, loss=0.0416]
+Train Loss: 0.2028, Train Acc: 92.56%
+Val   Loss: 0.1958, Val   Acc: 92.95%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 5/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=96.5, loss=0.0675]
+Train Loss: 0.1016, Train Acc: 96.52%
+Val   Loss: 0.1371, Val   Acc: 95.54%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 6/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.46it/s, acc=98, loss=0.0207]
+Train Loss: 0.0550, Train Acc: 97.97%
+Val   Loss: 0.2276, Val   Acc: 93.24%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 7/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.44it/s, acc=98.5, loss=0.0348]
+Train Loss: 0.0438, Train Acc: 98.54%
+Val   Loss: 0.1235, Val   Acc: 96.18%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 8/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.44it/s, acc=98.4, loss=0.00496]
+Train Loss: 0.0455, Train Acc: 98.39%
+Val   Loss: 0.1233, Val   Acc: 96.05%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 9/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.1, loss=0.0423]
+Train Loss: 0.0288, Train Acc: 99.08%
+Val   Loss: 0.1356, Val   Acc: 96.47%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 10/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.46it/s, acc=99.1, loss=0.000384]
+Train Loss: 0.0260, Train Acc: 99.14%
+Val   Loss: 0.1441, Val   Acc: 96.22%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 11/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.45it/s, acc=99.2, loss=0.0045]
+Train Loss: 0.0250, Train Acc: 99.17%
+Val   Loss: 0.0899, Val   Acc: 97.71%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 12/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99, loss=0.00285]
+Train Loss: 0.0341, Train Acc: 98.99%
+Val   Loss: 0.0484, Val   Acc: 98.56%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 13/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.44it/s, acc=99.4, loss=0.000248]
+Train Loss: 0.0184, Train Acc: 99.40%
+Val   Loss: 0.0569, Val   Acc: 98.43%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 14/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.48it/s, acc=99.4, loss=0.000375]
+Train Loss: 0.0186, Train Acc: 99.44%
+Val   Loss: 0.0575, Val   Acc: 98.60%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 15/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.46it/s, acc=99.1, loss=0.00436]
+Train Loss: 0.0281, Train Acc: 99.06%
+Val   Loss: 0.0564, Val   Acc: 98.17%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 16/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.46it/s, acc=99.3, loss=0.024]
+Train Loss: 0.0211, Train Acc: 99.29%
+Val   Loss: 0.0849, Val   Acc: 97.45%
+⚠ No improvement for 4 epoch(s).
+
+Epoch 17/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.49it/s, acc=99.3, loss=0.009]
+Train Loss: 0.0190, Train Acc: 99.35%
+Val   Loss: 0.0486, Val   Acc: 98.47%
+⚠ No improvement for 5 epoch(s).
+
+Epoch 18/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.46it/s, acc=99.4, loss=0.000793]
+Train Loss: 0.0187, Train Acc: 99.37%
+Val   Loss: 0.0823, Val   Acc: 97.41%
+⚠ No improvement for 6 epoch(s).
+
+Epoch 19/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.46it/s, acc=99.5, loss=0.00168]
+Train Loss: 0.0138, Train Acc: 99.46%
+Val   Loss: 0.0482, Val   Acc: 98.64%
+⚠ No improvement for 7 epoch(s).
+
+Epoch 20/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.48it/s, acc=99.4, loss=0.00186]
+Train Loss: 0.0187, Train Acc: 99.41%
+Val   Loss: 0.0409, Val   Acc: 98.81%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 21/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.45it/s, acc=99.4, loss=0.0082]
+Train Loss: 0.0195, Train Acc: 99.40%
+Val   Loss: 0.1532, Val   Acc: 95.45%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 22/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.5, loss=0.00585]
+Train Loss: 0.0143, Train Acc: 99.54%
+Val   Loss: 0.0600, Val   Acc: 98.73%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 23/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.46it/s, acc=99.6, loss=0.00461]
+Train Loss: 0.0137, Train Acc: 99.58%
+Val   Loss: 0.0398, Val   Acc: 98.60%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 24/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.5, loss=0.00182]
+Train Loss: 0.0165, Train Acc: 99.46%
+Val   Loss: 0.0293, Val   Acc: 99.11%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 25/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.7, loss=0.00043]
+Train Loss: 0.0099, Train Acc: 99.75%
+Val   Loss: 0.0431, Val   Acc: 98.73%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 26/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.5, loss=0.00139]
+Train Loss: 0.0184, Train Acc: 99.49%
+Val   Loss: 0.0289, Val   Acc: 99.07%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 27/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.5, loss=0.00111]
+Train Loss: 0.0156, Train Acc: 99.55%
+Val   Loss: 0.0477, Val   Acc: 98.64%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 28/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.45it/s, acc=99.6, loss=0.0638]
+Train Loss: 0.0113, Train Acc: 99.63%
+Val   Loss: 0.1176, Val   Acc: 96.26%
+⚠ No improvement for 4 epoch(s).
+
+Epoch 29/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.5, loss=0.000238]
+Train Loss: 0.0151, Train Acc: 99.48%
+Val   Loss: 0.0403, Val   Acc: 99.07%
+⚠ No improvement for 5 epoch(s).
+
+Epoch 30/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.46it/s, acc=99.6, loss=0.00807]
+Train Loss: 0.0115, Train Acc: 99.64%
+Val   Loss: 0.1788, Val   Acc: 95.58%
+⚠ No improvement for 6 epoch(s).
+
+Epoch 31/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.6, loss=5.05e-5]
+Train Loss: 0.0116, Train Acc: 99.58%
+Val   Loss: 0.0222, Val   Acc: 99.32%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 32/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.49it/s, acc=99.7, loss=0.00286]
+Train Loss: 0.0087, Train Acc: 99.72%
+Val   Loss: 0.0959, Val   Acc: 97.45%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 33/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.46it/s, acc=99.7, loss=2.12e-5]
+Train Loss: 0.0105, Train Acc: 99.69%
+Val   Loss: 0.0436, Val   Acc: 98.98%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 34/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.7, loss=6.66e-5]
+Train Loss: 0.0095, Train Acc: 99.69%
+Val   Loss: 0.0272, Val   Acc: 99.45%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 35/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.48it/s, acc=99.5, loss=0.00147]
+Train Loss: 0.0135, Train Acc: 99.55%
+Val   Loss: 0.0302, Val   Acc: 99.28%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 36/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.7, loss=0.000186]
+Train Loss: 0.0078, Train Acc: 99.75%
+Val   Loss: 0.0227, Val   Acc: 99.53%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 37/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.44it/s, acc=99.6, loss=0.000374]
+Train Loss: 0.0124, Train Acc: 99.58%
+Val   Loss: 0.0236, Val   Acc: 99.36%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 38/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.46it/s, acc=99.8, loss=6.74e-5]
+Train Loss: 0.0071, Train Acc: 99.75%
+Val   Loss: 0.0603, Val   Acc: 98.47%
+⚠ No improvement for 4 epoch(s).
+
+Epoch 39/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.6, loss=0.0162]
+Train Loss: 0.0109, Train Acc: 99.64%
+Val   Loss: 0.0182, Val   Acc: 99.49%
+⚠ No improvement for 5 epoch(s).
+
+Epoch 40/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.46it/s, acc=99.7, loss=9.44e-5]
+Train Loss: 0.0075, Train Acc: 99.73%
+Val   Loss: 0.0212, Val   Acc: 99.58%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 41/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.48it/s, acc=99.7, loss=8.47e-5]
+Train Loss: 0.0077, Train Acc: 99.74%
+Val   Loss: 0.0366, Val   Acc: 98.90%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 42/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.45it/s, acc=99.7, loss=0.00147]
+Train Loss: 0.0096, Train Acc: 99.69%
+Val   Loss: 0.0445, Val   Acc: 98.64%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 43/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.48it/s, acc=99.7, loss=0.00151]
+Train Loss: 0.0092, Train Acc: 99.68%
+Val   Loss: 0.0398, Val   Acc: 98.77%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 44/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.7, loss=7.54e-5]
+Train Loss: 0.0097, Train Acc: 99.66%
+Val   Loss: 0.0160, Val   Acc: 99.41%
+⚠ No improvement for 4 epoch(s).
+
+Epoch 45/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.48it/s, acc=99.8, loss=0.00205]
+Train Loss: 0.0068, Train Acc: 99.76%
+Val   Loss: 0.0068, Val   Acc: 99.75%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/single_backbones/pvs9_mfcc_v2.pt
+
+Epoch 46/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.8, loss=0.00451]
+Train Loss: 0.0089, Train Acc: 99.75%
+Val   Loss: 0.0278, Val   Acc: 98.94%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 47/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.44it/s, acc=99.8, loss=0.000102]
+Train Loss: 0.0057, Train Acc: 99.77%
+Val   Loss: 0.0702, Val   Acc: 98.26%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 48/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.48it/s, acc=99.6, loss=5.92e-5]
+Train Loss: 0.0123, Train Acc: 99.63%
+Val   Loss: 0.0138, Val   Acc: 99.58%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 49/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.8, loss=0.000216]
+Train Loss: 0.0062, Train Acc: 99.76%
+Val   Loss: 0.0556, Val   Acc: 98.43%
+⚠ No improvement for 4 epoch(s).
+
+Epoch 50/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:49<00:00,  7.47it/s, acc=99.8, loss=0.0002]
+Train Loss: 0.0078, Train Acc: 99.81%
+Val   Loss: 0.0194, Val   Acc: 99.36%
+⚠ No improvement for 5 epoch(s).
+
+Training complete. Best val accuracy: 99.75%
+----- Finished training run 1 -----
+
+
+🔹 Testing model pvs1_video_v2.pt on mfcc dataset
+Traceback (most recent call last):
+  File "/home/ws/ugoby/master_thesis/masterthesis/large_training.py", line 666, in <module>
+    "/home/ws/ugoby/master_thesis/data/pvs9_video++",
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/master_thesis/masterthesis/large_training.py", line 552, in testing_single_backbones
+    },
+
+  File "/home/ws/ugoby/master_thesis/masterthesis/testing_and_metrics.py", line 154, in test_and_evaluate
+    model.load_state_dict(torch.load(model_path, map_location=device))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/serialization.py", line 1484, in load
+    with _open_file_like(f, "rb") as opened_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+                     ^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/ws/ugoby/master_thesis/models/single_backbones/pvs1_video_v2.pt'
+(master_thesis) ugoby@aifb-sydsen-sun:~/master_thesis$ python /home/ws/ugoby/master_thesis/masterthesis/large_training.py
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:81: UserWarning: Argument(s) 'var_limit, mean' are not valid for transform GaussNoise
+  A.GaussNoise(var_limit=(8.0, 40.0), mean=0, per_channel=True, p=0.3),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:87: UserWarning: Argument(s) 'quality_lower, quality_upper' are not valid for transform ImageCompression
+  A.ImageCompression(quality_lower=30, quality_upper=65, p=0.75),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:88: UserWarning: Argument(s) 'num_flare_circles_lower, num_flare_circles_upper, angle_lower, angle_upper' are not valid for transform RandomSunFlare
+  A.RandomSunFlare(
+- Imports completed successfully -
+
+🔹 Testing model pvs9_video_v2.pt on mfcc dataset
+Traceback (most recent call last):
+  File "/home/ws/ugoby/master_thesis/masterthesis/large_training.py", line 722, in <module>
+    testing_single_backbones(experiments)
+  File "/home/ws/ugoby/master_thesis/masterthesis/large_training.py", line 608, in testing_single_backbones
+    testing_and_metrics.test_and_evaluate(
+  File "/home/ws/ugoby/master_thesis/masterthesis/testing_and_metrics.py", line 154, in test_and_evaluate
+    model.load_state_dict(torch.load(model_path, map_location=device))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/serialization.py", line 1484, in load
+    with _open_file_like(f, "rb") as opened_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ws/ugoby/miniconda3/envs/master_thesis/lib/python3.11/site-packages/torch/serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+                     ^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/ws/ugoby/master_thesis/models/single_backbones/pvs9_video_v2.pt'
+(master_thesis) ugoby@aifb-sydsen-sun:~/master_thesis$ python /home/ws/ugoby/master_thesis/masterthesis/large_training.py
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:81: UserWarning: Argument(s) 'var_limit, mean' are not valid for transform GaussNoise
+  A.GaussNoise(var_limit=(8.0, 40.0), mean=0, per_channel=True, p=0.3),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:87: UserWarning: Argument(s) 'quality_lower, quality_upper' are not valid for transform ImageCompression
+  A.ImageCompression(quality_lower=30, quality_upper=65, p=0.75),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:88: UserWarning: Argument(s) 'num_flare_circles_lower, num_flare_circles_upper, angle_lower, angle_upper' are not valid for transform RandomSunFlare
+  A.RandomSunFlare(
+- Imports completed successfully -
+
+🔹 Testing model pvs9_mfcc_v2.pt on mfcc dataset
+Testing pvs9_mfcc_v2: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 50/50 [00:08<00:00,  5.99it/s]
+✔ Results for model 'pvs9_mfcc_v2' saved to: /home/ws/ugoby/master_thesis/test_results/pvs9_mfcc_v2
+(master_thesis) ugoby@aifb-sydsen-sun:~/master_thesis$ python /home/ws/ugoby/master_thesis/masterthesis/large_training.py
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:81: UserWarning: Argument(s) 'var_limit, mean' are not valid for transform GaussNoise
+  A.GaussNoise(var_limit=(8.0, 40.0), mean=0, per_channel=True, p=0.3),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:87: UserWarning: Argument(s) 'quality_lower, quality_upper' are not valid for transform ImageCompression
+  A.ImageCompression(quality_lower=30, quality_upper=65, p=0.75),
+/home/ws/ugoby/master_thesis/masterthesis/image_video_tools.py:88: UserWarning: Argument(s) 'num_flare_circles_lower, num_flare_circles_upper, angle_lower, angle_upper' are not valid for transform RandomSunFlare
+  A.RandomSunFlare(
+- Imports completed successfully -
+
+----- Starting training run 1 -----
+/home/ws/ugoby/master_thesis/masterthesis/training_functions.py:525: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler() if device.type == 'cuda' else None
+
+Epoch 1/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:12<00:00,  5.86it/s, acc=99.4, loss=0.000415]
+Train Loss: 0.1095, Train Acc: 99.43%
+Val   Loss: 0.0002, Val   Acc: 100.00%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/MM_pvs1_video_pvs1_mfcc.pt
+
+Epoch 2/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:09<00:00,  5.98it/s, acc=100, loss=0.00019]
+Train Loss: 0.0003, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 3/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:09<00:00,  5.97it/s, acc=100, loss=3.2e-5]
+Train Loss: 0.0002, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 4/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:10<00:00,  5.95it/s, acc=100, loss=1.36e-5]
+Train Loss: 0.0003, Train Acc: 99.99%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 5/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:09<00:00,  5.97it/s, acc=100, loss=5.16e-5]
+Train Loss: 0.0001, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 4 epoch(s).
+
+Epoch 6/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:09<00:00,  5.96it/s, acc=100, loss=3.74e-5]
+Train Loss: 0.0002, Train Acc: 99.99%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 5 epoch(s).
+
+Epoch 7/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:10<00:00,  5.93it/s, acc=100, loss=5.44e-6]
+Train Loss: 0.0002, Train Acc: 99.99%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 6 epoch(s).
+
+Epoch 8/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:09<00:00,  5.96it/s, acc=100, loss=4e-6]
+Train Loss: 0.0002, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 7 epoch(s).
+
+Epoch 9/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:09<00:00,  5.99it/s, acc=100, loss=2.7e-6]
+Train Loss: 0.0000, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 8 epoch(s).
+
+Epoch 10/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:10<00:00,  5.92it/s, acc=100, loss=6.06e-7]
+Train Loss: 0.0000, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 9 epoch(s).
+
+Epoch 11/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:11<00:00,  5.89it/s, acc=100, loss=2.97e-6]
+Train Loss: 0.0000, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 10 epoch(s).
+⏹ Early stopping triggered after 11 epochs.
+
+Training complete. Best val accuracy: 100.00%
+----- Finished training run 1 -----
+
+
+----- Starting training run 2 -----
+
+Epoch 1/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:03<00:00,  5.82it/s, acc=99.2, loss=0.00253]
+Train Loss: 0.2177, Train Acc: 99.22%
+Val   Loss: 0.0018, Val   Acc: 100.00%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/MM_pvs9_video_pvs9_mfcc_v2.pt
+
+Epoch 2/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.05it/s, acc=100, loss=0.000389]
+Train Loss: 0.0012, Train Acc: 100.00%
+Val   Loss: 0.0002, Val   Acc: 100.00%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 3/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.06it/s, acc=100, loss=0.000187]
+Train Loss: 0.0003, Train Acc: 100.00%
+Val   Loss: 0.0001, Val   Acc: 100.00%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 4/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.05it/s, acc=100, loss=6.61e-5]
+Train Loss: 0.0002, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 5/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.05it/s, acc=100, loss=4.02e-5]
+Train Loss: 0.0001, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 4 epoch(s).
+
+Epoch 6/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.09it/s, acc=100, loss=5.54e-5]
+Train Loss: 0.0001, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 5 epoch(s).
+
+Epoch 7/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.06it/s, acc=100, loss=2.02e-5]
+Train Loss: 0.0001, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 6 epoch(s).
+
+Epoch 8/50
+Training: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.06it/s, acc=100, loss=1.3e-5]
+Train Loss: 0.0000, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 7 epoch(s).
+
+Epoch 9/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.06it/s, acc=100, loss=4.66e-6]
+Train Loss: 0.0000, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 8 epoch(s).
+
+Epoch 10/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.06it/s, acc=100, loss=2.03e-5]
+Train Loss: 0.0000, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 9 epoch(s).
+
+Epoch 11/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.07it/s, acc=100, loss=3.15e-5]
+Train Loss: 0.0001, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 10 epoch(s).
+⏹ Early stopping triggered after 11 epochs.
+
+Training complete. Best val accuracy: 100.00%
+----- Finished training run 2 -----
+
+
+----- Starting training run 3 -----
+
+Epoch 1/50
+Training: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:12<00:00,  5.86it/s, acc=99.4, loss=0.000545]
+Train Loss: 0.1123, Train Acc: 99.39%
+Val   Loss: 0.0004, Val   Acc: 100.00%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/MM_pvs1_video_pvs1_mfcc++.pt
+
+Epoch 2/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:09<00:00,  5.97it/s, acc=100, loss=0.000105]
+Train Loss: 0.0009, Train Acc: 99.98%
+Val   Loss: 0.0001, Val   Acc: 100.00%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 3/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:08<00:00,  6.00it/s, acc=100, loss=5.32e-5]
+Train Loss: 0.0004, Train Acc: 100.00%
+Val   Loss: 0.0001, Val   Acc: 100.00%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 4/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:07<00:00,  6.05it/s, acc=100, loss=0.000671]
+Train Loss: 0.0005, Train Acc: 99.99%
+Val   Loss: 0.0001, Val   Acc: 100.00%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 5/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:07<00:00,  6.06it/s, acc=100, loss=8.43e-5]
+Train Loss: 0.0004, Train Acc: 99.99%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 4 epoch(s).
+
+Epoch 6/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:08<00:00,  6.05it/s, acc=100, loss=7.89e-6]
+Train Loss: 0.0001, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 5 epoch(s).
+
+Epoch 7/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:07<00:00,  6.05it/s, acc=100, loss=2.55e-5]
+Train Loss: 0.0005, Train Acc: 99.99%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 6 epoch(s).
+
+Epoch 8/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:07<00:00,  6.06it/s, acc=100, loss=3.26e-5]
+Train Loss: 0.0002, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 7 epoch(s).
+
+Epoch 9/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:07<00:00,  6.06it/s, acc=100, loss=4.75e-6]
+Train Loss: 0.0002, Train Acc: 99.99%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 8 epoch(s).
+
+Epoch 10/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:07<00:00,  6.05it/s, acc=100, loss=2.18e-6]
+Train Loss: 0.0002, Train Acc: 100.00%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 9 epoch(s).
+
+Epoch 11/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 774/774 [02:07<00:00,  6.05it/s, acc=100, loss=1.71e-6]
+Train Loss: 0.0004, Train Acc: 99.99%
+Val   Loss: 0.0000, Val   Acc: 100.00%
+⚠ No improvement for 10 epoch(s).
+⏹ Early stopping triggered after 11 epochs.
+
+Training complete. Best val accuracy: 100.00%
+----- Finished training run 3 -----
+
+
+----- Starting training run 4 -----
+
+Epoch 1/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [00:59<00:00,  6.15it/s, acc=99.1, loss=0.00407]
+Train Loss: 0.2268, Train Acc: 99.08%
+Val   Loss: 0.0028, Val   Acc: 99.96%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/MM_pvs9_video_pvs9_mfcc++.pt
+
+Epoch 2/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.05it/s, acc=100, loss=0.000431]
+Train Loss: 0.0015, Train Acc: 100.00%
+Val   Loss: 0.0012, Val   Acc: 99.96%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 3/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.05it/s, acc=100, loss=0.000137]
+Train Loss: 0.0005, Train Acc: 100.00%
+Val   Loss: 0.0012, Val   Acc: 99.96%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 4/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.06it/s, acc=100, loss=0.000138]
+Train Loss: 0.0002, Train Acc: 100.00%
+Val   Loss: 0.0012, Val   Acc: 99.96%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 5/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.05it/s, acc=100, loss=3.34e-5]
+Train Loss: 0.0002, Train Acc: 100.00%
+Val   Loss: 0.0011, Val   Acc: 99.96%
+⚠ No improvement for 4 epoch(s).
+
+Epoch 6/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.06it/s, acc=100, loss=1.71e-5]
+Train Loss: 0.0001, Train Acc: 100.00%
+Val   Loss: 0.0011, Val   Acc: 99.96%
+⚠ No improvement for 5 epoch(s).
+
+Epoch 7/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.07it/s, acc=100, loss=2e-5]
+Train Loss: 0.0001, Train Acc: 100.00%
+Val   Loss: 0.0011, Val   Acc: 99.96%
+⚠ No improvement for 6 epoch(s).
+
+Epoch 8/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.05it/s, acc=100, loss=1.04e-5]
+Train Loss: 0.0001, Train Acc: 100.00%
+Val   Loss: 0.0011, Val   Acc: 99.96%
+⚠ No improvement for 7 epoch(s).
+
+Epoch 9/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.05it/s, acc=100, loss=7.84e-6]
+Train Loss: 0.0000, Train Acc: 100.00%
+Val   Loss: 0.0011, Val   Acc: 99.96%
+⚠ No improvement for 8 epoch(s).
+
+Epoch 10/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.05it/s, acc=100, loss=5.21e-5]
+Train Loss: 0.0000, Train Acc: 100.00%
+Val   Loss: 0.0011, Val   Acc: 99.96%
+⚠ No improvement for 9 epoch(s).
+
+Epoch 11/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:00<00:00,  6.04it/s, acc=100, loss=7.42e-6]
+Train Loss: 0.0000, Train Acc: 100.00%
+Val   Loss: 0.0011, Val   Acc: 99.96%
+⚠ No improvement for 10 epoch(s).
+⏹ Early stopping triggered after 11 epochs.
+
+Training complete. Best val accuracy: 99.96%
+----- Finished training run 4 -----
+
+
+----- Starting training run 5 -----
+
+Epoch 1/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:04<00:00,  5.69it/s, acc=99.3, loss=0.00383]
+Train Loss: 0.2207, Train Acc: 99.25%
+Val   Loss: 0.0033, Val   Acc: 100.00%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/MM_pvs9_video+_pvs9_mfcc_v2.pt
+
+Epoch 2/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:05<00:00,  5.65it/s, acc=100, loss=0.000359]
+Train Loss: 0.0024, Train Acc: 100.00%
+Val   Loss: 0.0006, Val   Acc: 100.00%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 3/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:05<00:00,  5.66it/s, acc=100, loss=0.00029]
+Train Loss: 0.0008, Train Acc: 100.00%
+Val   Loss: 0.0003, Val   Acc: 100.00%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 4/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:06<00:00,  5.55it/s, acc=100, loss=8.88e-5]
+Train Loss: 0.0005, Train Acc: 100.00%
+Val   Loss: 0.0002, Val   Acc: 100.00%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 5/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:06<00:00,  5.56it/s, acc=100, loss=0.000703]
+Train Loss: 0.0006, Train Acc: 99.98%
+Val   Loss: 0.0001, Val   Acc: 100.00%
+⚠ No improvement for 4 epoch(s).
+
+Epoch 6/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:06<00:00,  5.52it/s, acc=100, loss=8.06e-5]
+Train Loss: 0.0003, Train Acc: 100.00%
+Val   Loss: 0.0001, Val   Acc: 100.00%
+⚠ No improvement for 5 epoch(s).
+
+Epoch 7/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:06<00:00,  5.52it/s, acc=100, loss=5.98e-5]
+Train Loss: 0.0004, Train Acc: 99.99%
+Val   Loss: 0.0001, Val   Acc: 100.00%
+⚠ No improvement for 6 epoch(s).
+
+Epoch 8/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:05<00:00,  5.60it/s, acc=100, loss=2.22e-5]
+Train Loss: 0.0003, Train Acc: 99.99%
+Val   Loss: 0.0001, Val   Acc: 100.00%
+⚠ No improvement for 7 epoch(s).
+
+Epoch 9/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:06<00:00,  5.54it/s, acc=100, loss=1.46e-5]
+Train Loss: 0.0002, Train Acc: 100.00%
+Val   Loss: 0.0001, Val   Acc: 100.00%
+⚠ No improvement for 8 epoch(s).
+
+Epoch 10/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:06<00:00,  5.53it/s, acc=100, loss=8.09e-6]
+Train Loss: 0.0003, Train Acc: 99.99%
+Val   Loss: 0.0001, Val   Acc: 100.00%
+⚠ No improvement for 9 epoch(s).
+
+Epoch 11/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:06<00:00,  5.51it/s, acc=100, loss=1.17e-5]
+Train Loss: 0.0004, Train Acc: 99.98%
+Val   Loss: 0.0001, Val   Acc: 100.00%
+⚠ No improvement for 10 epoch(s).
+⏹ Early stopping triggered after 11 epochs.
+
+Training complete. Best val accuracy: 100.00%
+----- Finished training run 5 -----
+
+
+----- Starting training run 6 -----
+
+Epoch 1/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:03<00:00,  5.78it/s, acc=99.2, loss=0.00329]
+Train Loss: 0.2302, Train Acc: 99.17%
+Val   Loss: 0.0071, Val   Acc: 99.83%
+✔ Best model updated and saved to /home/ws/ugoby/master_thesis/models/MM_pvs9_video+_pvs9_mfcc++.pt
+
+Epoch 2/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:04<00:00,  5.71it/s, acc=99.9, loss=0.00554]
+Train Loss: 0.0039, Train Acc: 99.95%
+Val   Loss: 0.0061, Val   Acc: 99.83%
+⚠ No improvement for 1 epoch(s).
+
+Epoch 3/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:04<00:00,  5.72it/s, acc=100, loss=0.000137]
+Train Loss: 0.0021, Train Acc: 99.96%
+Val   Loss: 0.0062, Val   Acc: 99.79%
+⚠ No improvement for 2 epoch(s).
+
+Epoch 4/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:03<00:00,  5.77it/s, acc=100, loss=7.71e-5]
+Train Loss: 0.0016, Train Acc: 99.96%
+Val   Loss: 0.0075, Val   Acc: 99.70%
+⚠ No improvement for 3 epoch(s).
+
+Epoch 5/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:03<00:00,  5.79it/s, acc=100, loss=3.65e-5]
+Train Loss: 0.0012, Train Acc: 99.96%
+Val   Loss: 0.0071, Val   Acc: 99.75%
+⚠ No improvement for 4 epoch(s).
+
+Epoch 6/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:03<00:00,  5.76it/s, acc=100, loss=7.13e-5]
+Train Loss: 0.0014, Train Acc: 99.97%
+Val   Loss: 0.0066, Val   Acc: 99.87%
+⚠ No improvement for 5 epoch(s).
+
+Epoch 7/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:04<00:00,  5.73it/s, acc=100, loss=4.72e-5]
+Train Loss: 0.0010, Train Acc: 99.98%
+Val   Loss: 0.0071, Val   Acc: 99.83%
+⚠ No improvement for 6 epoch(s).
+
+Epoch 8/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:04<00:00,  5.72it/s, acc=100, loss=2.94e-5]
+Train Loss: 0.0011, Train Acc: 99.96%
+Val   Loss: 0.0079, Val   Acc: 99.70%
+⚠ No improvement for 7 epoch(s).
+
+Epoch 9/50
+Training: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:04<00:00,  5.72it/s, acc=99.9, loss=0.00167]
+Train Loss: 0.0018, Train Acc: 99.93%
+Val   Loss: 0.0066, Val   Acc: 99.83%
+⚠ No improvement for 8 epoch(s).
+
+Epoch 10/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:04<00:00,  5.70it/s, acc=100, loss=0.00494]
+Train Loss: 0.0011, Train Acc: 99.96%
+Val   Loss: 0.0071, Val   Acc: 99.75%
+⚠ No improvement for 9 epoch(s).
+
+Epoch 11/50
+Training: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 368/368 [01:04<00:00,  5.75it/s, acc=100, loss=3.14e-5]
+Train Loss: 0.0008, Train Acc: 99.97%
+Val   Loss: 0.0077, Val   Acc: 99.83%
+⚠ No improvement for 10 epoch(s).
+⏹ Early stopping triggered after 11 epochs.
+
+Training complete. Best val accuracy: 99.83%
+----- Finished training run 6 -----
+
+(master_thesis) ugoby@aifb-sydsen-sun:~/master_thesis$ tmux capture-pane -S - -E -; tmux save-buffer - > output.txt
+
+
