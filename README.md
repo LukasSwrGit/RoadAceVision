@@ -1,5 +1,9 @@
 # RoadAceVision: Deep Multi-Modal Learning for Road Surface Classification
 
+<p align="center">
+  <img src="assets/Car%20Wallpaper.png" alt="RoadAceVision overview image" width="800">
+</p>
+
 RoadAceVision contains the implementation code for a master thesis on deep multimodal road surface classification using the Passive Vehicular Sensors (PVS) dataset. The project compares image-based, accelerometer-based, and multimodal fusion approaches for classifying road surfaces under normal and adverse input conditions.
 
 The repository is intended as a research codebase. It contains the data preparation utilities, dataset loaders, model definitions, training routines, evaluation scripts, and experiment scripts used for the thesis. The current version still contains several hard-coded absolute paths from the original research environment. These paths must be adapted before running the code on another machine. A future version should replace these paths with a centralized configuration file or command-line interface.
